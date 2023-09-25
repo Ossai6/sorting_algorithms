@@ -1,89 +1,90 @@
-#include <stdio.h>
 #include "sort.h"
 
+
+
 /**
- * quick_sort - Sorts an array of integers using Quick Sort algorithm.
- * @array: The array to be sorted.
- * @size: The size of the array.
- *
- * Description: This function is the entry point for Quick Sort. It performs
- * the initial call to the quicksort function to sort the array.
- *
- * Return: void.
- */
+ * quick_sort - Sorts an array of integers in ascending order using
+ * the QuickSort algorithm (with Lomuto partition scheme)
+ * @array: An array of integers
+ * @size: The size of the array
+*/
 void quick_sort(int *array, size_t size)
 {
+	int start, end;
+
 	if (array == NULL || size < 2)
 		return;
-	lumuto_quicksort(array, 0, size - 1, size);
+
+	start = 0;
+	end = size - 1;
+	sort_algo(array, size, start, end);
 }
 
-/**
- * lomuto_partition - Partitions an array using Lomuto partition scheme.
- * @array: The array to be sorted.
- * @low: The low index of the partition.
- * @high: The high index of the partition.
- * @size: The size of the array.
- *
- * Return: The pivot index after partitioning.
- *
- * Description: This function chooses a pivot, rearranges the elements such
- * that elements less than the pivot are on the left, and elements greater
- * than the pivot are on the right. It returns the pivot index.
- */
-int lomuto_partition(int *array, int low, int high, size_t size)
-{
-	int pivot = array[high];
-	int j,  i = low - 1;
 
-	for (j = low; j <= high - 1; j++)
+/**
+ * lomuto_part - Divide an array into two using Lomuto partition scheme
+ * @array: An array of integers
+ * @start: Beginning of the array
+ * @end: The end of the array
+ * @size: The size of the array
+ * Return: The index of the pivot
+*/
+size_t lomuto_part(int *array, size_t size, int start, int end)
+{
+	int temp_index, i, pivot;
+
+	pivot = array[end];
+	temp_index = start - 1;
+
+	for (i = start; i < end; i++)
 	{
-		if (array[j] < pivot)
+		if (array[i] <= pivot)
 		{
-			i++;
-			swap(&array[i], &array[j]);
-			print_array(array, size);
+			temp_index++;
+			if (temp_index != i)
+				swap_arr(&array[temp_index], &array[i], array, size);
 		}
 	}
-	swap(&array[i + 1], &array[high]);
+	if (temp_index + 1 != end)
+		swap_arr(&array[temp_index + 1], &array[end], array, size);
+	return (temp_index + 1);
+}
+
+
+/**
+ * swap_arr - Swap two integers
+ * @first: First integer
+ * @second: Second integer
+ * @array: An array of integers
+ * @size: The size of the array
+ */
+void swap_arr(int *first, int *second, const int *array, size_t size)
+{
+	int temp;
+
+	temp = *first;
+	*first = *second;
+	*second = temp;
 	print_array(array, size);
-	return (i + 1);
 }
 
-/**
- * lumuto_quicksort - Sorts an array using Quick Sort algorithm.
- * @array: The array to be sorted.
- * @low: The low index of the partition.
- * @high: The high index of the partition.
- * @size: The size of the array.
- *
- * Description: This function is a recursive implementation of the Quick Sort
- * algorithm. It partitions the array, sorts the partitions recursively, and
- * combines them to obtain the sorted array.
- *
- * Returns: void.
- */
-void lumuto_quicksort(int *array, int low, int high, size_t size)
-{
-	if (low < high)
-	{
-	int pivot_index = lomuto_partition(array, low, high, size);
-
-	lumuto_quicksort(array, low, pivot_index - 1, size);
-	lumuto_quicksort(array, pivot_index + 1, high, size);
-	}
-}
 
 /**
- * swap - Swaps two integers in an array.
- * @a: Pointer to the first integer.
- * @b: Pointer to the second integer.
- *
- * Description: This function swaps the values of two integers in an array.
+ * sort_algo - Algorithm to implement quick sort
+ * @array: An array of integers
+ * @start: Beginning of the array
+ * @end: End of the array
+ * @size: The size of the array
  */
-void swap(int *a, int *b)
+void sort_algo(int *array, size_t size, int start, int end)
 {
-	int temp = *a;
-	*a = *b;
-	*b = temp;
+	int p_index;
+
+	if (start >= end || start < 0)
+		return;
+
+	p_index = lomuto_part(array, size, start, end);
+	if (p_index - 1 > start)
+		sort_algo(array, size, start, p_index - 1);
+	sort_algo(array, size, p_index + 1, end);
 }
