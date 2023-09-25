@@ -1,4 +1,6 @@
 #include "sort.h"
+listint_t *swap_node(listint_t *node, listint_t **list);
+
 /**
  * insertion_sort_list - function that sorts a doubly linked list of
  * integers in ascending order using the Insertion sort algorithm
